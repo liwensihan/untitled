@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 
 import java.util.HashMap;
@@ -30,7 +31,7 @@ public class ProductControl {
     }
 
     @RequestMapping("/intoPRO")
-    public String showPro(Model model, String pageNo) {
+    public ModelAndView showPro(ModelAndView model, String pageNo) {
         Pager pg = new Pager();
         //当前页
         if (pageNo == null) {
@@ -52,12 +53,14 @@ public class ProductControl {
         //数据集合
         List<Product> list = productService.getPageSelPRO(map);
         pg.setPlist(list);
-        model.addAttribute("page", pg);
-        return "showProduct";
+        model.addObject("list",list);
+        model.addObject("page", pg);
+        model.setViewName("showProduct");
+        return model;
     }
 
     @RequestMapping("/deletePRO")
-    public String DeletePRO(String id) {
+    public String DeletePRO(Integer id) {
         int count = productService.DeletePRO(id);
         if (count > 0) {
             return "redirect:/intoPRO";

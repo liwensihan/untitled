@@ -41,7 +41,7 @@ public class ProductServiceImpl implements ProductService
     }
 
     @Override
-    public int DeletePRO(String id) {
+    public int DeletePRO(Integer id) {
         return productMapper.DeletePRO(id);
     }
 }

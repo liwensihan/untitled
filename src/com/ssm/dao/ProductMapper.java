@@ -15,5 +15,5 @@ public interface ProductMapper {
 
     int getCount();
 
-    int DeletePRO(String id);
+    int DeletePRO(Integer id);
 }

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"  
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+            xmlns:aop="http://www.springframework.org/schema/aop"  
+            xmlns:p="http://www.springframework.org/schema/p"  
+            xmlns:tx="http://www.springframework.org/schema/tx"  
+            xmlns:context="http://www.springframework.org/schema/context"  
+            xsi:schemaLocation="   
+                http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd   
+                http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd   
+                http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd 
+                http://www.springframework.org/schema/context 
+                http://www.springframework.org/schema/context/spring-context.xsd">
+     <!-- service注解 -->           
+    <context:component-scan base-package="com.ssm.service.impl"/>
+    
+   	<!--  引入database.properties -->
+		<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+			<property name="location" value="classpath:database.properties"></property>
+		</bean>
+        
+    <!-- 配置 数据源 -->
+          <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        	<property name="driverClassName" value="${driver}"/>
+        	<property name="url" value="${url}"/>
+        	<property name="username" value="${username}"/>
+        	<property name="password" value="${password}"/>      	
+        </bean> 
+   <!--  <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+			驱动
+			<property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+			连接
+			<property name="url" value="jdbc:mysql://127.0.0.1:3306/test"/>
+			用户名
+			<property name="username" value="root"/>
+			密码
+			<property name="password" value="root"/>
+		</bean> -->
+	 	
+    <!-- 事务管理   -->
+    <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">  
+    	<property name="dataSource" ref="dataSource"/>  
+ 	</bean>
+   
+ 	<!-- 配置mybatis SqlSessionFactoryBean -->
+ 	<bean id="sqlSessionFactoryBean" class="org.mybatis.spring.SqlSessionFactoryBean">
+ 		<!-- 引入数据源DataSource -->
+ 		<property name="dataSource" ref="dataSource"/>
+ 		<!-- 引入mybatis核心文件 -->
+ 		<property name="configLocation" value="classpath:mybatis-config.xml"/>
+ 	</bean>
+ 	
+ 	<aop:aspectj-autoproxy/>
+      <aop:config proxy-target-class="true">
+      	<aop:pointcut expression="execution(* com.ssm.service..*(..))" id="transService"/>
+      	<aop:advisor advice-ref="myAdvice" pointcut-ref="transService"/>
+      </aop:config>
+      
+ 	<tx:advice id="myAdvice" transaction-manager="txManager">  
+    	<tx:attributes>  
+	        <tx:method name="ssm*"  propagation="REQUIRED" rollback-for="Exception"  />
+	        <tx:method name="*" />
+    	</tx:attributes>  
+ 	</tx:advice>
+    <!-- 自动注册MapperFactoryBean 自动数据映射器-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+    	<property name="basePackage" value="com.ssm.dao"/>
+    </bean>  
+ </beans>

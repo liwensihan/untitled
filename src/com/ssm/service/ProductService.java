@@ -15,5 +15,5 @@ public interface ProductService {
 
     int getCount();
 
-    int DeletePRO(String id);
+    int DeletePRO(Integer id);
 }
