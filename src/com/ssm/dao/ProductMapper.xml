@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssm.dao.ProductMapper">
+    <select id="findAllPRO" resultType="Product">
+        SELECT p.id,p.productname,p.descs,c.name,c.explain FROM PRODUCT p
+        INNER JOIN CATAGORY c ON(P.ID=C.ID)
+    </select>
+    <select id="getPageSelPRO" resultType="Product" parameterType="map">
+        SELECT p.id,p.productname,p.descs,c.name,c.explain FROM PRODUCT p
+        INNER JOIN CATAGORY c on(c.id=p.cid) limit #{pageNo},#{pageSize}
+    </select>
+    <select id="getCount" resultType="int">
+        SELECT COUNT(1) FROM PRODUCT
+    </select>
+    <delete id="DeletePRO" parameterType="String">
+        DELETE FROM PRODUCT WHERE id=#{id}
+    </delete>
+</mapper>
